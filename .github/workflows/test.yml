@@ -19,8 +19,12 @@ jobs:
             "5.16",
             "5.14",
             "5.12",
-            "5.10"
+            "5.10",
+            "5.8"
           ]
+        include:
+          - perl: 5.34
+            coverage: true
     name: Perl ${{ matrix.perl }}
     steps:
       - uses: actions/checkout@v2
@@ -37,4 +41,12 @@ jobs:
           ./Build
       - name: Run test
         run: ./Build test
+
+      - name: Run coverage
+        if: ${{ matrix.coverage }}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          cpanm -nq Devel::Cover Devel::Cover::Report::Codecov
+          cover -test -report codecov
 

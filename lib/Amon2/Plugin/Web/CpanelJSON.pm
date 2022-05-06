@@ -1,5 +1,4 @@
 package Amon2::Plugin::Web::CpanelJSON;
-use 5.008001;
 use strict;
 use warnings;
 

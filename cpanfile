@@ -1,4 +1,4 @@
-requires 'perl', '5.008001';
+requires 'perl', '5.010000';
 requires 'Cpanel::JSON::XS';
 requires 'Amon2';
 requires 'HTTP::SecureHeaders';

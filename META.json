@@ -45,7 +45,7 @@
             "Amon2" : "0",
             "Cpanel::JSON::XS" : "0",
             "HTTP::SecureHeaders" : "0",
-            "perl" : "5.008001"
+            "perl" : "5.010000"
          }
       },
       "test" : {

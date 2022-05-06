@@ -1,10 +1,10 @@
 {
-   "abstract" : "It's new $module",
+   "abstract" : "Cpanel::JSON::XS plugin",
    "author" : [
       "kfly8 <kfly@cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v3.1.16, CPAN::Meta::Converter version 2.150010",
+   "generated_by" : "Minilla/v3.1.17, CPAN::Meta::Converter version 2.150010",
    "license" : [
       "perl_5"
    ],
@@ -42,16 +42,32 @@
       },
       "runtime" : {
          "requires" : {
+            "Amon2" : "0",
+            "Cpanel::JSON::XS" : "0",
+            "HTTP::SecureHeaders" : "0",
             "perl" : "5.008001"
          }
       },
       "test" : {
          "requires" : {
-            "Test::More" : "0.98"
+            "Module::Build::Tiny" : "0.035",
+            "Test::More" : "0.98",
+            "Test::Requires" : "0.06"
          }
       }
    },
    "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/kfly8/p5-Amon2-Plugin-Web-CpanelJSON/issues"
+      },
+      "homepage" : "https://github.com/kfly8/p5-Amon2-Plugin-Web-CpanelJSON",
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/kfly8/p5-Amon2-Plugin-Web-CpanelJSON.git",
+         "web" : "https://github.com/kfly8/p5-Amon2-Plugin-Web-CpanelJSON"
+      }
+   },
    "version" : "0.01",
    "x_authority" : "cpan:KFLY",
    "x_serialization_backend" : "JSON::PP version 4.06",

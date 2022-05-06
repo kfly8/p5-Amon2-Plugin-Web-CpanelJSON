@@ -13,9 +13,17 @@ my %DEFAULT_CONFIG = (
     name => 'render_json',
 
     # for security
-    secure_headers => HTTP::SecureHeaders->new(
-        x_frame_options => 'DENY',
-    ),
+    # refs https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html#security-headers
+    secure_headers => {
+        content_security_policy           => "default-src 'none'",
+        strict_transport_security         => 'max-age=631138519',
+        x_content_type_options            => 'nosniff',
+        x_download_options                => undef,
+        x_frame_options                   => 'DENY',
+        x_permitted_cross_domain_policies => 'none',
+        x_xss_protection                  => '1; mode=block',
+        referrer_policy                   => 'no-referrer',
+    },
 
     json_escape_filter => {
         # Ref: https://cheatsheetseries.owasp.org/cheatsheets/XSS_Filter_Evasion_Cheat_Sheet.html
@@ -43,8 +51,15 @@ my %DEFAULT_CONFIG = (
 
 sub init {
     my ($class, $c, $conf) = @_;
+    $conf ||= {};
 
-    $conf = { %DEFAULT_CONFIG, %{$conf||{}} };
+    # deep merge HTTP::SecureHeaders for security
+    $conf->{secure_headers} = HTTP::SecureHeaders->new(
+        %{ $DEFAULT_CONFIG{secure_headers} },
+        %{ $conf->{secure_headers} || {} },
+    );
+
+    $conf = { %DEFAULT_CONFIG, %{$conf} };
 
     my $name = $conf->{name};
 

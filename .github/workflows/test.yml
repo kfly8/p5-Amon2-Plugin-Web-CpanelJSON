@@ -34,6 +34,11 @@ jobs:
       - name: Install dependencies
         run: |
           cpanm -nq --installdeps --with-develop --with-recommends .
+
+      - name: Install optional deps
+        run: |
+          cpanm -nq JSON::UnblessObject
+
       - name: Build
         run: |
           perl Build.PL

@@ -42,7 +42,7 @@ my %DEFAULT_CONFIG = (
     type_all_string => !!0,
 
     # for convenience
-    deflate_object    => !!0,
+    unbless_object    => undef,
     status_code_field => undef,
 
     # for compatibility options
@@ -127,9 +127,9 @@ sub _generate_json_encoder {
     return sub {
         my ($data, $spec) = @_;
 
-        if ($conf->{deflate_object}) {
-            if (blessed($data) && $data->can('DEFLATE_OBJECT')) {
-                $data = $data->DEFLATE_OBJECT;
+        if (my $unbless_object = $conf->{unbless_object}) {
+            if (blessed($data)) {
+                $data = $unbless_object->($data, $spec);
             }
         }
 
@@ -289,12 +289,16 @@ Default: false
 
 =over 4
 
-=item deflate_object
+=item unbless_object
 
-Default: false
+Default: undef
+
+    use Object::UnblessWithJSONSpec ();
 
     __PACKAGE__->load_plugins(
-        'Web::CpanelJSON' => { deflate_object => !!1 }
+        'Web::CpanelJSON' => {
+            unbless_object => \&Object::UnblessWithJSONSpec::unbless_with_json_spec,
+        }
     );
 
     ...
@@ -305,14 +309,6 @@ Default: false
         has message => (
             is => 'ro',
         );
-
-        sub DEFLATE_OBJECT {
-            my $self = shift;
-
-            return {
-                message => $self->message,
-            }
-        }
     }
 
     my $object = Some::Object->new(message => 'HELLO');

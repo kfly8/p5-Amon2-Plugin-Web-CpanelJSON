@@ -1,4 +1,4 @@
-[![Actions Status](https://github.com/kfly8/p5-Amon2-Plugin-Web-CpanelJSON/workflows/test/badge.svg)](https://github.com/kfly8/p5-Amon2-Plugin-Web-CpanelJSON/actions)
+[![Actions Status](https://github.com/kfly8/p5-Amon2-Plugin-Web-CpanelJSON/actions/workflows/test.yml/badge.svg)](https://github.com/kfly8/p5-Amon2-Plugin-Web-CpanelJSON/actions) [![Coverage Status](http://codecov.io/github/kfly8/p5-Amon2-Plugin-Web-CpanelJSON/coverage.svg?branch=main)](https://codecov.io/github/kfly8/p5-Amon2-Plugin-Web-CpanelJSON?branch=main) [![MetaCPAN Release](https://badge.fury.io/pl/Amon2-Plugin-Web-CpanelJSON.svg)](https://metacpan.org/release/Amon2-Plugin-Web-CpanelJSON)
 # NAME
 
 Amon2::Plugin::Web::CpanelJSON - Cpanel::JSON::XS plugin

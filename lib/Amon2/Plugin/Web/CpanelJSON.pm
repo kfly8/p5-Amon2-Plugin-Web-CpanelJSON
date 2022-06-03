@@ -249,69 +249,56 @@ C<< $json_spec >> is a structure for JSON encoding defined in L<Cpanel::JSON::XS
 
 =over 4
 
+=item json
+
+Parameters of L<Cpanel::JSON::XS>. Default is as follows:
+
+    ascii => !!1,
+
+Any parameters can be set:
+
+     __PACKAGE__->load_plugins(
+        'Web::CpanelJSON' => {
+            json => {
+                ascii     => 0,
+                utf8      => 1,
+                canonical => 1,
+            }
+        }
+    );
+
+=item secure_headers
+
+Parameters of L<HTTP::SecureHeaders>. Default is as follows:
+
+    content_security_policy           => "default-src 'none'",
+    strict_transport_security         => 'max-age=631138519',
+    x_content_type_options            => 'nosniff',
+    x_download_options                => undef,
+    x_frame_options                   => 'DENY',
+    x_permitted_cross_domain_policies => 'none',
+    x_xss_protection                  => '1; mode=block',
+    referrer_policy                   => 'no-referrer',
+
+
+=item json_escape_filter
+
+Escapes JSON to prevent XSS. Default is as follows:
+
+    '+' => '\\u002b',
+    '<' => '\\u003c',
+    '>' => '\\u003e',
+
 =item name
 
 Name of method. Default: 'render_json'
 
-=back
-
-=head2 Security Configurations
-
-=over 4
-
-=item json_escape
-
-Default: true
-
-=item json_hijacking
-
-Default: true
-
-=item nosniff
-
-Default: true
-
-=back
-
-=head2 JSON Configurations
-
-The following JSON encoding settings are available.
-
-=over 4
-
-=item ascii
-
-Default: true
-
-=item utf8
-
-Default: true
-
-=item canonical
-
-Default: false
-
-=item convert_blessed
-
-Default: false
-
-=item require_types
-
-Default: false
-
-=item type_all_string
-
-Default: false
-
-=back
-
-=head2 Other Configurations
-
-=over 4
-
 =item unbless_object
 
 Default: undef
+
+This option is preprocessing coderef encoding an blessed object in JSON.
+For example, the code using L<Object::UnblessWithJSONSpec> is as follows:
 
     use Object::UnblessWithJSONSpec ();
 
@@ -355,8 +342,11 @@ In general JSON API error code embed in a JSON by JSON API Response body.
 But can not be logging the error code of JSON for the access log of a general Web Servers.
 You can possible by using the C<< X-API-Status >> header.
 
-=back
+=item defence_json_hijacking_for_legacy_browser
 
+Default: false
+
+=back
 
 =head1 LICENSE
 

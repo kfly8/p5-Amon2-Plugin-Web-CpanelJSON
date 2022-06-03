@@ -39,6 +39,7 @@ jobs:
       - name: Install optional deps
         run: |
           cpanm -nq JSON::UnblessObject
+          cpanm -nq Amon2::Lite
 
       - name: Build
         run: |
@@ -55,3 +56,16 @@ jobs:
           cpanm -nq Devel::Cover Devel::Cover::Report::Codecov
           cover -test -report codecov
 
+  misspell:
+    runs-on: ubuntu-latest
+    name: misspell
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Run misspell
+      uses: reviewdog/action-misspell@v1
+      with:
+        github_token: ${{ secrets.github_token }}
+        reporter: github-pr-review
+        locale: "US"

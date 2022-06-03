@@ -42,9 +42,23 @@ use Encode qw(encode_utf8 decode_utf8);
     );
     sub encoding { 'utf-8' }
 }
+
+{
+    package MyApp::Web::None;
+    use parent qw(Amon2 Amon2::Web);
+    __PACKAGE__->load_plugins(
+        'Web::CpanelJSON', {
+            json => undef,
+        }
+    );
+    sub encoding { 'utf-8' }
+}
+
+
 my $c_default = MyApp::Web::Default->new(request => Amon2::Web::Request->new({}));
 my $c_canonical = MyApp::Web::Canonical->new(request => Amon2::Web::Request->new({}));
 my $c_utf8 = MyApp::Web::UTF8->new(request => Amon2::Web::Request->new({}));
+my $c_none = MyApp::Web::None->new(request => Amon2::Web::Request->new({}));
 
 subtest 'ascii' => sub {
     my $src = { message => 'あ'};
@@ -86,6 +100,18 @@ subtest 'utf8' => sub {
         my $res = $c_utf8->render_json($src);
         is $res->content, encode_utf8('{"message":"あ"}');
         is_deeply decode_json($res->content), $src;
+    };
+};
+
+subtest 'none' => sub {
+    my $src = { message => 'あ'};
+
+    subtest 'ascii is off' => sub {
+        my $res = $c_none->render_json($src);
+        is $res->content, '{"message":"あ"}';
+        is utf8::is_utf8($res->content), !!1;
+        my $json = Cpanel::JSON::XS->new->utf8(0);
+        is_deeply $json->decode($res->content), $src;
     };
 };
 

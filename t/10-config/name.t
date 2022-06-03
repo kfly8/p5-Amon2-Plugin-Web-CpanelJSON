@@ -12,6 +12,14 @@ use Cpanel::JSON::XS::Type;
     sub encoding { 'utf-8' }
 }
 
+{
+    package MyApp::Web::ConflictName;
+    use parent qw(Amon2 Amon2::Web);
+    __PACKAGE__->load_plugins('Web::CpanelJSON', { name => 'encoding' });
+    sub encoding { 'utf-8' }
+}
+
+
 my $app = MyApp::Web->to_app;
 
 test_psgi $app, sub {
@@ -40,6 +48,11 @@ test_psgi $app, sub {
         is $res->code, 200;
         is $res->content, '{"hello":"world"}'
     };
+};
+
+subtest 'conflict case' => sub {
+    my $c = MyApp::Web::ConflictName->new(request => Amon2::Web::Request->new({}));
+    is $c->encoding, 'utf-8', 'cannot override';
 };
 
 done_testing;

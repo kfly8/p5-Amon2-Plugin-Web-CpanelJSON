@@ -34,12 +34,9 @@ my %DEFAULT_CONFIG = (
     },
 
     # JSON config
-    ascii           => !!1, # for security
-    utf8            => !!0,
-    canonical       => !!0,
-    convert_blessed => !!0,
-    require_types   => !!0,
-    type_all_string => !!0,
+    json => {
+        ascii => !!1, # for security
+    },
 
     # for convenience
     unbless_object    => undef,
@@ -131,13 +128,13 @@ sub _generate_render_json {
 
 sub _generate_json_encoder {
     my $conf = shift;
-    my $json = Cpanel::JSON::XS->new()
-                               ->ascii($conf->{ascii})
-                               ->utf8($conf->{utf8})
-                               ->canonical($conf->{canonical})
-                               ->convert_blessed($conf->{convert_blessed})
-                               ->require_types($conf->{require_types})
-                               ->type_all_string($conf->{type_all_string});
+
+    my $json = Cpanel::JSON::XS->new;
+    if (my $json_args = $conf->{json}) {
+        for my $key (keys %{$json_args}) {
+            $json->$key($json_args->{$key})
+        }
+    }
 
     my $escape_filter = $conf->{json_escape_filter} || {};
     my $escape_target = '';

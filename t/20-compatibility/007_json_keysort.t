@@ -17,7 +17,7 @@ use JSON 2;
 
     __PACKAGE__->load_plugins(
         #'Web::JSON' => { canonical => 1 }
-        'Web::CpanelJSON' => { canonical => 1 }
+        'Web::CpanelJSON' => { json => { canonical => 1 } }
     );
 }
 

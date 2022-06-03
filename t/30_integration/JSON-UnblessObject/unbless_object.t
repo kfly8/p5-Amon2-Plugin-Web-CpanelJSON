@@ -13,7 +13,9 @@ use JSON::UnblessObject;
     use parent qw(Amon2 Amon2::Web);
     __PACKAGE__->load_plugins(
         'Web::CpanelJSON', {
-            canonical => 1,
+            json => {
+                canonical => 1,
+            },
             unbless_object => \&JSON::UnblessObject::unbless_object,
         }
     );

@@ -49,17 +49,27 @@ my %DEFAULT_CONFIG = (
     defence_json_hijacking_for_legacy_browser => !!0,
 );
 
+
 sub init {
     my ($class, $c, $conf) = @_;
-    $conf ||= {};
 
-    # deep merge HTTP::SecureHeaders for security
-    $conf->{secure_headers} = HTTP::SecureHeaders->new(
-        %{ $DEFAULT_CONFIG{secure_headers} },
-        %{ $conf->{secure_headers} || {} },
-    );
+    $conf = do {
+        $conf ||= {};
 
-    $conf = { %DEFAULT_CONFIG, %{$conf} };
+        for my $key (qw/secure_headers json_escape_filter json/) {
+            if (exists $conf->{$key} && !defined $conf->{$key}) {
+                $conf->{$key} = undef;
+            }
+            else {
+                $conf->{$key} = {
+                    %{ $DEFAULT_CONFIG{$key} },
+                    %{ $conf->{$key} || {} },
+                }
+            }
+        }
+
+        +{ %DEFAULT_CONFIG, %{$conf} };
+    };
 
     my $name = $conf->{name};
 
@@ -74,6 +84,11 @@ sub _generate_render_json {
 
     my $encoder = _generate_json_encoder($conf);
     my $validator = _generate_req_validator($conf);
+
+    my $secure_headers;
+    if ($conf->{secure_headers}) {
+        $secure_headers = HTTP::SecureHeaders->new(%{ $conf->{secure_headers} });
+    }
 
     return sub {
         my ($c, $data, $spec, $status) = @_;
@@ -95,8 +110,8 @@ sub _generate_render_json {
             $res->content_length(length($output));
             $res->body($output);
 
-            if (my $secure_headers = $conf->{secure_headers}) {
-                $secure_headers->apply($res->headers)
+            if ($secure_headers) {
+                $secure_headers->apply($res->headers);
             }
 
             # X-API-Status
@@ -124,6 +139,14 @@ sub _generate_json_encoder {
                                ->require_types($conf->{require_types})
                                ->type_all_string($conf->{type_all_string});
 
+    my $escape_filter = $conf->{json_escape_filter} || {};
+    my $escape_target = '';
+    for my $key (keys %{$escape_filter}) {
+        if ($escape_filter->{$key}) {
+            $escape_target .= $key
+        }
+    }
+
     return sub {
         my ($data, $spec) = @_;
 
@@ -135,8 +158,8 @@ sub _generate_json_encoder {
 
         my $output = $json->encode($data, $spec);
 
-        if (my $escape = $conf->{json_escape_filter}) {
-            $output =~ s!([+<>])!$escape->{$1}!g;
+        if ($escape_target && $escape_filter) {
+            $output =~ s!([$escape_target])!$escape_filter->{$1}!g;
         }
 
         return $output;
